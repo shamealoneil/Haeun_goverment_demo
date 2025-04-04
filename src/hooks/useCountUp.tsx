@@ -11,9 +11,15 @@ interface UseCountUpProps {
 export function useCountUp({ end, duration = 2000, start = 0, isAnimating }: UseCountUpProps) {
   const [count, setCount] = useState(start);
   
-  // Handle non-numeric values like "24/7"
-  const isNumeric = typeof end === 'number' || /^\d+$/.test(String(end));
-  const numericEnd = isNumeric ? Number(end) : 0;
+  // Parse the end value to handle different formats
+  const processEndValue = () => {
+    // Handle percentage or plus sign
+    let numericPart = String(end).replace(/[^0-9.]/g, '');
+    return numericPart ? Number(numericPart) : null;
+  };
+  
+  const numericEnd = processEndValue();
+  const isNumeric = numericEnd !== null;
   
   useEffect(() => {
     // Reset to start when not animating
@@ -22,25 +28,30 @@ export function useCountUp({ end, duration = 2000, start = 0, isAnimating }: Use
       return;
     }
     
-    // For non-numeric values, just set the final value
+    // For non-numeric values, we don't animate
     if (!isNumeric) {
       return;
     }
     
     // Calculate the increment per frame
-    const frameRate = 30; // frames per second
+    const frameRate = 60; // frames per second
     const totalFrames = Math.ceil(duration / 1000 * frameRate);
     const timePerFrame = 1000 / frameRate;
     const increment = (numericEnd - start) / totalFrames;
     
     let currentCount = start;
+    let frameCount = 0;
+    
     const timer = setInterval(() => {
-      currentCount += increment;
+      frameCount++;
       
-      if (
-        (increment >= 0 && currentCount >= numericEnd) || 
-        (increment < 0 && currentCount <= numericEnd)
-      ) {
+      // Easing function for smoother animation
+      const progress = frameCount / totalFrames;
+      const easedProgress = 1 - Math.pow(1 - progress, 3); // Cubic ease-out
+      
+      currentCount = start + (numericEnd - start) * easedProgress;
+      
+      if (frameCount >= totalFrames) {
         setCount(numericEnd);
         clearInterval(timer);
       } else {
@@ -51,5 +62,15 @@ export function useCountUp({ end, duration = 2000, start = 0, isAnimating }: Use
     return () => clearInterval(timer);
   }, [isAnimating, start, numericEnd, duration, isNumeric]);
   
-  return isNumeric ? count : end;
+  // Function to format the displayed value
+  const getDisplayValue = () => {
+    if (!isNumeric) return end;
+    
+    const originalStr = String(end);
+    const suffix = originalStr.match(/[^0-9.]+$/)?.[0] || '';
+    
+    return count + suffix;
+  };
+  
+  return getDisplayValue();
 }

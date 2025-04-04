@@ -1,4 +1,3 @@
-
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useCountUp } from '@/hooks/useCountUp';
 import React from 'react';
@@ -26,8 +25,7 @@ const StatItem = ({ value, label, isAnimating, delay }: {
       }}
     >
       <div className="text-4xl font-bold text-primary mb-2">
-        {typeof animatedValue === 'number' ? animatedValue : value}
-        {value.toString().includes('+') ? '+' : ''}
+        {animatedValue}
       </div>
       <div className="text-gray-600 font-medium">{label}</div>
     </div>
@@ -42,7 +40,7 @@ const AboutSection = () => {
   const stats = [
     { value: '15M+', label: 'Citizens Served' },
     { value: '250+', label: 'Services Offered' },
-    { value: '99', label: 'Satisfaction Rate' },
+    { value: '99%', label: 'Satisfaction Rate' },
     { value: '24/7', label: 'Support Available' },
   ];
 
