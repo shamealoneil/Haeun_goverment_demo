@@ -1,6 +1,36 @@
 
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useCountUp } from '@/hooks/useCountUp';
+import React from 'react';
+
+const StatItem = ({ value, label, isAnimating, delay }: { 
+  value: string; 
+  label: string; 
+  isAnimating: boolean;
+  delay: number;
+}) => {
+  const animatedValue = useCountUp({
+    end: value,
+    duration: 2000,
+    start: 0,
+    isAnimating: isAnimating
+  });
+
+  return (
+    <div 
+      className="bg-white rounded-lg shadow-md p-6 text-center"
+      style={{ 
+        transitionDelay: `${delay}ms`,
+        opacity: isAnimating ? 1 : 0,
+        transform: isAnimating ? 'translateY(0)' : 'translateY(20px)',
+        transition: 'opacity 0.7s ease, transform 0.7s ease'
+      }}
+    >
+      <div className="text-3xl font-bold text-primary mb-2">{animatedValue}</div>
+      <div className="text-gray-600">{label}</div>
+    </div>
+  );
+};
 
 const AboutSection = () => {
   const leftSection = useScrollAnimation();
@@ -89,31 +119,15 @@ const AboutSection = () => {
               : 'opacity-0 translate-y-10'
           }`}
         >
-          {stats.map((stat, index) => {
-            // Use our countUp hook to animate the values
-            const animatedValue = useCountUp({
-              end: stat.value,
-              duration: 2000,
-              start: 0,
-              isAnimating: statsSection.isIntersecting
-            });
-            
-            return (
-              <div 
-                key={index} 
-                className="bg-white rounded-lg shadow-md p-6 text-center"
-                style={{ 
-                  transitionDelay: `${index * 100}ms`,
-                  opacity: statsSection.isIntersecting ? 1 : 0,
-                  transform: statsSection.isIntersecting ? 'translateY(0)' : 'translateY(20px)',
-                  transition: 'opacity 0.7s ease, transform 0.7s ease'
-                }}
-              >
-                <div className="text-3xl font-bold text-primary mb-2">{animatedValue}</div>
-                <div className="text-gray-600">{stat.label}</div>
-              </div>
-            );
-          })}
+          {stats.map((stat, index) => (
+            <StatItem 
+              key={index}
+              value={stat.value} 
+              label={stat.label} 
+              isAnimating={statsSection.isIntersecting}
+              delay={index * 100}
+            />
+          ))}
         </div>
       </div>
     </section>

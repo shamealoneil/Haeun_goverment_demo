@@ -12,7 +12,7 @@ export function useCountUp({ end, duration = 2000, start = 0, isAnimating }: Use
   const [count, setCount] = useState(start);
   
   // Handle non-numeric values like "24/7"
-  const isNumeric = typeof end === 'number' || /^\d+$/.test(end as string);
+  const isNumeric = typeof end === 'number' || /^\d+$/.test(String(end));
   const numericEnd = isNumeric ? Number(end) : 0;
   
   useEffect(() => {
@@ -24,7 +24,6 @@ export function useCountUp({ end, duration = 2000, start = 0, isAnimating }: Use
     
     // For non-numeric values, just set the final value
     if (!isNumeric) {
-      setCount(numericEnd);
       return;
     }
     
