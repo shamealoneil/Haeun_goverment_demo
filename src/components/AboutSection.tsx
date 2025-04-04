@@ -18,16 +18,18 @@ const StatItem = ({ value, label, isAnimating, delay }: {
 
   return (
     <div 
-      className="bg-white rounded-lg shadow-md p-6 text-center"
+      className="bg-white rounded-lg shadow-md p-6 text-center transform transition-all duration-700"
       style={{ 
         transitionDelay: `${delay}ms`,
         opacity: isAnimating ? 1 : 0,
         transform: isAnimating ? 'translateY(0)' : 'translateY(20px)',
-        transition: 'opacity 0.7s ease, transform 0.7s ease'
       }}
     >
-      <div className="text-3xl font-bold text-primary mb-2">{animatedValue}</div>
-      <div className="text-gray-600">{label}</div>
+      <div className="text-4xl font-bold text-primary mb-2">
+        {typeof animatedValue === 'number' ? animatedValue : value}
+        {value.toString().includes('+') ? '+' : ''}
+      </div>
+      <div className="text-gray-600 font-medium">{label}</div>
     </div>
   );
 };
@@ -40,7 +42,7 @@ const AboutSection = () => {
   const stats = [
     { value: '15M+', label: 'Citizens Served' },
     { value: '250+', label: 'Services Offered' },
-    { value: '99%', label: 'Satisfaction Rate' },
+    { value: '99', label: 'Satisfaction Rate' },
     { value: '24/7', label: 'Support Available' },
   ];
 
@@ -113,11 +115,11 @@ const AboutSection = () => {
         
         <div 
           ref={statsSection.ref}
-          className={`grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 transition-all duration-700 ${
-            statsSection.isIntersecting 
-              ? 'opacity-100 translate-y-0' 
-              : 'opacity-0 translate-y-10'
-          }`}
+          className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 transition-all duration-700"
+          style={{
+            opacity: statsSection.isIntersecting ? 1 : 0,
+            transform: statsSection.isIntersecting ? 'translateY(0)' : 'translateY(20px)'
+          }}
         >
           {stats.map((stat, index) => (
             <StatItem 
@@ -125,7 +127,7 @@ const AboutSection = () => {
               value={stat.value} 
               label={stat.label} 
               isAnimating={statsSection.isIntersecting}
-              delay={index * 100}
+              delay={index * 150}
             />
           ))}
         </div>

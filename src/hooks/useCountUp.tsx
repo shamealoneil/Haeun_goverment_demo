@@ -28,8 +28,9 @@ export function useCountUp({ end, duration = 2000, start = 0, isAnimating }: Use
     }
     
     // Calculate the increment per frame
-    const totalFrames = 60;
-    const timePerFrame = duration / totalFrames;
+    const frameRate = 30; // frames per second
+    const totalFrames = Math.ceil(duration / 1000 * frameRate);
+    const timePerFrame = 1000 / frameRate;
     const increment = (numericEnd - start) / totalFrames;
     
     let currentCount = start;
