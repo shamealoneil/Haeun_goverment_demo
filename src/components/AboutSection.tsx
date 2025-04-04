@@ -1,5 +1,6 @@
 
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import { useCountUp } from '@/hooks/useCountUp';
 
 const AboutSection = () => {
   const leftSection = useScrollAnimation();
@@ -88,21 +89,31 @@ const AboutSection = () => {
               : 'opacity-0 translate-y-10'
           }`}
         >
-          {stats.map((stat, index) => (
-            <div 
-              key={index} 
-              className="bg-white rounded-lg shadow-md p-6 text-center"
-              style={{ 
-                transitionDelay: `${index * 100}ms`,
-                opacity: statsSection.isIntersecting ? 1 : 0,
-                transform: statsSection.isIntersecting ? 'translateY(0)' : 'translateY(20px)',
-                transition: 'opacity 0.7s ease, transform 0.7s ease'
-              }}
-            >
-              <div className="text-3xl font-bold text-primary mb-2">{stat.value}</div>
-              <div className="text-gray-600">{stat.label}</div>
-            </div>
-          ))}
+          {stats.map((stat, index) => {
+            // Use our countUp hook to animate the values
+            const animatedValue = useCountUp({
+              end: stat.value,
+              duration: 2000,
+              start: 0,
+              isAnimating: statsSection.isIntersecting
+            });
+            
+            return (
+              <div 
+                key={index} 
+                className="bg-white rounded-lg shadow-md p-6 text-center"
+                style={{ 
+                  transitionDelay: `${index * 100}ms`,
+                  opacity: statsSection.isIntersecting ? 1 : 0,
+                  transform: statsSection.isIntersecting ? 'translateY(0)' : 'translateY(20px)',
+                  transition: 'opacity 0.7s ease, transform 0.7s ease'
+                }}
+              >
+                <div className="text-3xl font-bold text-primary mb-2">{animatedValue}</div>
+                <div className="text-gray-600">{stat.label}</div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
